@@ -42,15 +42,15 @@ class IndexController extends AbstractActionController
     }
     
     public function addAction(){
-        $this->logger->info('Index action');
         
         $form = new TerminalForm();
         $form->get('submit')->setValue('Add');
         
          $request = $this->getRequest();
 
+         $site_name = $this->container->get('config')['site_name'];
         if (! $request->isPost()) {
-            return ['form' => $form];
+            return ['form' => $form,'title' => $site_name];
         }
 
         $terminal = new Terminal();
@@ -58,11 +58,12 @@ class IndexController extends AbstractActionController
         $form->setData($request->getPost());
 
         if (! $form->isValid()) {
-            return ['form' => $form];
+            return ['form' => $form,'title' => $site_name];
         }
 
         $terminal->exchangeArray($form->getData());
         
-        return $this->redirect()->toRoute('application');
+        
+        return $this->redirect()->toRoute('home');
     }
 }
