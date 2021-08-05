@@ -15,9 +15,11 @@
         "laminas/laminas-development-mode": "^3.2",
         "laminas/laminas-skeleton-installer": "^0.3",
         "laminas/laminas-mvc": "^3.1.1",
-        "laminas/laminas-form": "^3.0",
+        "laminas/laminas-form": "^2.11",
         "laminas/laminas-i18n": "^2.11",
-        "laminas/laminas-log": "^2.13"
+        "laminas/laminas-log": "^2.13",
+        "doctrine/doctrine-orm-module": "^4.0",
+        "doctrine/doctrine-module": "^4.1"
     },
     "autoload": {
         "psr-4": {

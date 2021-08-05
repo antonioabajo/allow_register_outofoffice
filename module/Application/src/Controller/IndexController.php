@@ -11,12 +11,14 @@ use Laminas\View\Model\ViewModel;
 use Interop\Container\ContainerInterface;
 
 use Application\Form\TerminalForm;
-use Application\Model\Terminal;
+use Application\Entity\Terminal;
 
 class IndexController extends AbstractActionController
 {
     
     private $container;
+    private $entityManager;
+    
     private $logger;
     
     public function __construct(ContainerInterface $container) {
@@ -24,6 +26,7 @@ class IndexController extends AbstractActionController
         $writer = new Stream('var/log/output_php.log');
         $this->logger = new Logger();
         $this->logger->addWriter($writer);
+        $this->entityManager = $container->get('doctrine.entitymanager.orm_default');
     }
     
     public function indexAction()
@@ -63,6 +66,9 @@ class IndexController extends AbstractActionController
 
         $terminal->exchangeArray($form->getData());
         
+        $this->entityManager->persist($terminal);
+        // Apply changes to database.
+        $this->entityManager->flush();
         
         return $this->redirect()->toRoute('home');
     }
