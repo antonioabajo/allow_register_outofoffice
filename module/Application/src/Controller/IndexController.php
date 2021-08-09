@@ -99,7 +99,7 @@ class IndexController extends AbstractActionController
                  $this->entityManager->flush();
             }
 
-            // Redirect to list of albums
+            // Redirect to list of terminals
             return $this->redirect()->toRoute('home');
         }
 
@@ -107,5 +107,50 @@ class IndexController extends AbstractActionController
             'id'    => $id,
             'terminal' => $this->entityManager->getRepository(Terminal::class)->findOneById($id),
         ];
+    }
+    
+        public function editAction()
+    {
+        $id = (int) $this->params()->fromRoute('id', 0);
+
+        if (0 === $id) {
+            return $this->redirect()->toRoute('application', ['action' => 'add']);
+        }
+
+        // Retrieve the terminal with the specified id. Doing so raises
+        // an exception if the terminal is not found, which should result
+        // in redirecting to the landing page.
+        try {
+            $terminalRepository = $this->entityManager->getRepository(Terminal::class);
+            $terminal= $terminalRepository->findOneById($id);
+        } catch (\Exception $e) {
+            return $this->redirect()->toRoute('application', ['action' => 'index']);
+        }
+
+        $form = new TerminalForm();
+        $form->bind($terminal);
+        $form->get('submit')->setAttribute('value', 'Edit');
+
+        $request = $this->getRequest();
+        $viewData = ['id' => $id, 'form' => $form];
+
+        if (! $request->isPost()) {
+            return $viewData;
+        }
+
+        $form->setInputFilter($terminal->getInputFilter());
+        $form->setData($request->getPost());
+
+        if (! $form->isValid()) {
+            return $viewData;
+        }
+
+        try {
+            $this->entityManager->flush();
+        } catch (\Exception $e) {
+        }
+
+        // Redirect to terminal list
+        return $this->redirect()->toRoute('application', ['action' => 'index']);
     }
 }
