@@ -40,3 +40,22 @@ echo $this->form()->openTag($form);
 echo $this->formSubmit($submit);
 echo $this->formHidden($form->get('id'));
 echo $this->form()->closeTag();
+?>
+
+<table class="table">
+<tr>
+    <th>MAC</th>
+    <th>IP</th>
+    <th>&nbsp;</th>
+</tr>
+<?php foreach ($terminals as $terminal) : ?>
+    <tr>
+        <td><?= $this->escapeHtml($terminal->mac) ?></td>
+        <td><?= $this->escapeHtml($terminal->ip) ?></td>
+        <td>
+            <a href="<?= $this->url('album', ['action' => 'edit', 'id' => $terminal->id]) ?>">Edit</a>
+            <a href="<?= $this->url('album', ['action' => 'delete', 'id' => $terminal->id]) ?>">Delete</a>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</table>
