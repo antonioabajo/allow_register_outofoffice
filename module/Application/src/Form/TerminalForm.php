@@ -33,6 +33,13 @@ class TerminalForm extends Form
             ],
         ]);
         $this->add([
+            'name' => 'allowed_access',
+            'type' => 'checkbox',
+            'options' => [
+                'label' => 'Allowed access',
+            ],
+        ]);
+        $this->add([
             'name' => 'submit',
             'type' => 'submit',
             'attributes' => [

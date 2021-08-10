@@ -12,7 +12,11 @@ $mac->setAttribute('placeholder', 'Terminal title');
 
 $ip = $form->get('ip');
 $ip->setAttribute('class', 'form-control');
-$ip->setAttribute('placeholder', 'Artist');
+$ip->setAttribute('placeholder', 'Ip Address');
+
+$allowed_access = $form->get('allowed_access');
+$allowed_access->setAttribute('class', 'form-control');
+$allowed_access->setAttribute('placeholder', ' Allowed access');
 
 $submit = $form->get('submit');
 $submit->setAttribute('class', 'btn btn-primary');
@@ -36,6 +40,17 @@ echo $this->form()->openTag($form);
     <?= $this->formElement($ip) ?>
     <?= $this->formElementErrors()->render($ip, ['class' => 'help-block']) ?>
 </div>
+
+<div class="form-group">
+<div class="form-check-inline">
+    <?= $this->formLabel($allowed_access) ?>
+    <div style="width: 20px;margin-left:10px;">
+    <?= $this->formElement($allowed_access) ?>
+    </div>
+    <?= $this->formElementErrors()->render($allowed_access, ['class' => 'help-block']) ?>
+</div>
+</div>
+
 
 <?php
 echo $this->formSubmit($submit);

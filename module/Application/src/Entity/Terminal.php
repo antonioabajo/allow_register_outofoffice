@@ -1,81 +1,100 @@
 <?php
+
 namespace Application\Entity;
+
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
 use Laminas\Filter\ToInt;
 use Laminas\InputFilter\InputFilter;
 use Laminas\InputFilter\InputFilterInterface;
+use Laminas\InputFilter\InputFilterAwareInterface;
 use Laminas\Validator\StringLength;
-
 use Doctrine\ORM\Mapping as ORM;
+use Application\Controller\WhiteListAPI;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="terminal")
  */
-class Terminal
-{
-        /**
+class Terminal implements InputFilterAwareInterface {
+
+    /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      */
     public $id;
-    
-    /** 
-   * @ORM\Column(name="mac")  
-   */
+
+    /**
+     * @ORM\Column(name="mac")  
+     */
     public $mac;
-    
-  /** 
-   * @ORM\Column(name="ip")  
-   */
+
+    /**
+     * @ORM\Column(name="ip")  
+     */
     public $ip;
+
+    /**
+     * @ORM\Column(name="allowed_access")  
+     */
+    public $allowed_access;
     
     
-    function getId(){
+    public $inputFilter;
+
+    function getId() {
         return $this->id;
     }
-    
-    function  getMac(){
+
+    function getMac() {
         return $this->mac;
     }
-    
-    function getIp(){
+
+    function getIp() {
         return $this->ip;
     }
 
-
-     public function exchangeArray(array $data)
-    {
-        $this->id     = !empty($data['id']) ? $data['id'] : null;
-        $this->mac = !empty($data['mac']) ? $data['mac'] : null;
-        $this->ip  = !empty($data['ip']) ? $data['ip'] : null;
+    function getAllowedAccess() {
+        return $this->allowed_access;
+        /*if ($this->ip && $this->mac) {
+            $allowed = WhiteListAPI::getInstance()->checkMACAddress($this->mac, $this->ip);
+            if ($allowed === "1") {
+                $this->allowed_access = 'yes';
+            } else {
+                $this->allowed_access = 'no';
+            }
+        }
+        return $this->allowed_access;*/
     }
-    
-    
+
+    public function exchangeArray(array $data) {
+        $this->id = !empty($data['id']) ? $data['id'] : null;
+        $this->mac = !empty($data['mac']) ? $data['mac'] : null;
+        $this->ip = !empty($data['ip']) ? $data['ip'] : null;
+        $this->allowed_access = !empty($data['allowed_access']) ? $data['allowed_access'] : 0;
+    }
+
     // Add the following method:
-    public function getArrayCopy()
-    {
+    public function getArrayCopy() {
         return [
-            'id'     => $this->id,
+            'id' => $this->id,
             'mac' => $this->mac,
-            'ip'  => $this->ip,
+            'ip' => $this->ip,
+            'allowed_access' => $this->allowed_access,
         ];
     }
-    
+
     /* Add the following methods: */
 
-    public function setInputFilter(InputFilterInterface $inputFilter)
-    {
+    public function setInputFilter(InputFilterInterface $inputFilter) {
         throw new DomainException(sprintf(
-            '%s does not allow injection of an alternate input filter',
-            __CLASS__
+                                '%s does not allow injection of an alternate input filter',
+                                __CLASS__
         ));
     }
 
-    public function getInputFilter()
-    {
+    public function getInputFilter() {
         if ($this->inputFilter) {
             return $this->inputFilter;
         }
@@ -127,9 +146,10 @@ class Terminal
                 ],
             ],
         ]);
+        
 
         $this->inputFilter = $inputFilter;
         return $this->inputFilter;
     }
-}
 
+}

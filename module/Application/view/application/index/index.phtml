@@ -13,6 +13,10 @@ $ip = $form->get('ip');
 $ip->setAttribute('class', 'form-control');
 $ip->setAttribute('placeholder', 'IP Address');
 
+$allowed_access = $form->get('allowed_access');
+$allowed_access->setAttribute('class', 'form-control');
+$allowed_access->setAttribute('placeholder', ' Allowed access');
+        
 // This provides CSS classes for the submit button:
 $submit = $form->get('submit');
 $submit->setAttribute('class', 'btn btn-primary');
@@ -36,12 +40,15 @@ echo $this->form()->openTag($form);
     <?= $this->formElementErrors()->render($ip, ['class' => 'help-block']) ?>
 </div>
 
-<table class="table">
-<tr>
-    <th>MAC</th>
-    <th>IP</th>
-    <th>&nbsp;</th>
-</tr>
+<div class="form-group">
+<div class="form-check-inline">
+    <?= $this->formLabel($allowed_access) ?>
+    <div style="width: 20px;margin-left:10px;">
+    <?= $this->formElement($allowed_access) ?>
+    </div>
+    <?= $this->formElementErrors()->render($allowed_access, ['class' => 'help-block']) ?>
+</div>
+</div>
 
 <?php
 echo $this->formSubmit($submit);
@@ -49,15 +56,41 @@ echo $this->formHidden($form->get('id'));
 echo $this->form()->closeTag();
 ?>
 
-<?php foreach ($terminals as $terminal) : ?>
+<table class="table">
+<tr>
+    <th>MAC</th>
+    <th>IP</th>
+    <th>ALLOWED</th>
+    <th>&nbsp;</th>
+</tr>
+
+<?php foreach ($terminals as $terminal) : 
+    $actionAllow = $this->escapeHtml($terminal->allowed_access) === '1'? "disallow":'allow';
+    $allowText = 'Disallow';
+    if($actionAllow === 'allow'){
+        $allowText = 'Allow';
+    }
+    $allowedText = 'no';
+    if($terminal->allowed_access === '1'){
+        $allowedText = 'yes';
+    }
+?>
     <tr>
         <td><?= $this->escapeHtml($terminal->mac) ?></td>
         <td><?= $this->escapeHtml($terminal->ip) ?></td>
+        <td><?= $this->escapeHtml($allowedText) ?></td>
         <td>
             <a href="<?= $this->url('application', ['action' => 'edit', 'id' => $terminal->id]) ?>">Edit</a>
             <a href="<?= $this->url('application', ['action' => 'delete', 'id' => $terminal->id]) ?>">Delete</a>
+            <a href="<?= $this->url('application', ['action' => $actionAllow, 'id' => $terminal->id]) ?>"><?=$allowText ?></a>
         </td>
     </tr>
 <?php endforeach; ?>
 </table>
+
+
+<div>
+    <h2>WhiteList in Node Server</h2>
+    <p><?=str_replace(array("{", "}", '","'), array("{<br />&nbsp;&nbsp;&nbsp;&nbsp;", "<br />}", '",<br />&nbsp;&nbsp;&nbsp;&nbsp;"'), $allowedTerminalsList);?></p>
+</div>
 
